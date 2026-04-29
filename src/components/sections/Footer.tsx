@@ -61,24 +61,33 @@ export default async function Footer() {
             <p className="text-zinc-500 text-sm leading-relaxed max-w-[32ch]">
               {footer.brand_tagline}
             </p>
-            {footer.social?.length > 0 && (
-              <div className="flex gap-3">
-                {footer.social.map((s) => {
-                  const Icon =
-                    SOCIAL_ICONS[s.platform.toLowerCase()] ?? LinkedinLogo;
-                  return (
-                    <a
-                      key={s.platform + s.href}
-                      href={s.href || "#"}
-                      aria-label={s.platform}
-                      className="text-zinc-600 hover:text-zinc-300 transition-colors"
-                    >
-                      <Icon size={20} weight="thin" />
-                    </a>
-                  );
-                })}
-              </div>
-            )}
+            {(() => {
+              // Hide socials whose href is empty or just "#" (placeholder)
+              const realSocials = (footer.social ?? []).filter(
+                (s) => s.href && s.href !== "#",
+              );
+              if (realSocials.length === 0) return null;
+              return (
+                <div className="flex gap-3">
+                  {realSocials.map((s) => {
+                    const Icon =
+                      SOCIAL_ICONS[s.platform.toLowerCase()] ?? LinkedinLogo;
+                    return (
+                      <a
+                        key={s.platform + s.href}
+                        href={s.href}
+                        aria-label={s.platform}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-600 hover:text-zinc-300 transition-colors"
+                      >
+                        <Icon size={20} weight="thin" />
+                      </a>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
 
           {footer.company_links?.length > 0 && (
@@ -155,14 +164,7 @@ export default async function Footer() {
 
         <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col sm:flex-row justify-between gap-4">
           <p className="text-zinc-600 text-xs">{footer.copyright}</p>
-          <div className="flex gap-6">
-            <a href="#" className="text-zinc-600 text-xs hover:text-zinc-400 transition-colors">
-              Політика конфіденційності
-            </a>
-            <a href="#" className="text-zinc-600 text-xs hover:text-zinc-400 transition-colors">
-              Умови використання
-            </a>
-          </div>
+          {/* Privacy / Terms hidden until real pages exist — placeholder links hurt SEO. */}
         </div>
       </div>
     </footer>

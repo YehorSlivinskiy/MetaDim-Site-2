@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
 
-export const metadata = { title: "Вхід — MetaDim Admin" };
+export const metadata: Metadata = {
+  title: "Вхід — MetaDim Admin",
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default function AdminLoginPage({
   searchParams,
