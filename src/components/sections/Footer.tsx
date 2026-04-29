@@ -1,128 +1,160 @@
-import { LinkedinLogo, InstagramLogo, FacebookLogo } from "@phosphor-icons/react/dist/ssr";
+import {
+  LinkedinLogo,
+  InstagramLogo,
+  FacebookLogo,
+  YoutubeLogo,
+  XLogo,
+} from "@phosphor-icons/react/dist/ssr";
+import { getSiteSetting } from "@/lib/db";
+import type { FooterSettings, ContactSettings } from "@/lib/supabase";
 
-const companyLinks = [
-  { label: "Про компанію", href: "#why" },
-  { label: "Послуги", href: "#services" },
-  { label: "Портфоліо", href: "#portfolio" },
-  { label: "Контакти", href: "#contact" },
-];
+type SocialIcon = typeof LinkedinLogo;
 
-const serviceLinks = [
-  { label: "Житлове будівництво", href: "#services" },
-  { label: "Комерційна нерухомість", href: "#services" },
-  { label: "Промислові об'єкти", href: "#services" },
-  { label: "Реконструкція", href: "#services" },
-];
+const fallbackFooter: FooterSettings = {
+  brand_tagline:
+    "Преміальне будівництво з 1997 року. Від Карпат до узбережжя — ваш надійний партнер на десятиліття.",
+  social: [
+    { platform: "linkedin", href: "#" },
+    { platform: "instagram", href: "#" },
+    { platform: "facebook", href: "#" },
+  ],
+  company_links: [
+    { label: "Про компанію", href: "#why" },
+    { label: "Послуги", href: "#services" },
+    { label: "Портфоліо", href: "#portfolio" },
+    { label: "Контакти", href: "#contact" },
+  ],
+  service_links: [
+    { label: "Житлове будівництво", href: "#services" },
+    { label: "Комерційна нерухомість", href: "#services" },
+    { label: "Промислові об'єкти", href: "#services" },
+    { label: "Реконструкція", href: "#services" },
+  ],
+  copyright: "© 2024 MetaDim. Усі права захищені.",
+};
 
-export default function Footer() {
+const SOCIAL_ICONS: Record<string, SocialIcon> = {
+  linkedin: LinkedinLogo,
+  instagram: InstagramLogo,
+  facebook: FacebookLogo,
+  youtube: YoutubeLogo,
+  x: XLogo,
+  twitter: XLogo,
+};
+
+export default async function Footer() {
+  const [footerData, contactData] = await Promise.all([
+    getSiteSetting("footer"),
+    getSiteSetting("contact"),
+  ]);
+  const footer = footerData ?? fallbackFooter;
+  const contact: ContactSettings | null = contactData;
+
   return (
     <footer className="bg-zinc-950 border-t border-zinc-800">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-12">
-          {/* Brand */}
           <div className="flex flex-col gap-5">
             <span className="font-display font-semibold text-zinc-100 text-xl tracking-tight">
               MetaDim
             </span>
             <p className="text-zinc-500 text-sm leading-relaxed max-w-[32ch]">
-              Преміальне будівництво з 1997 року. Від Карпат до узбережжя — ваш
-              надійний партнер на десятиліття.
+              {footer.brand_tagline}
             </p>
-            <div className="flex gap-3">
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="text-zinc-600 hover:text-zinc-300 transition-colors"
-              >
-                <LinkedinLogo size={20} weight="thin" />
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="text-zinc-600 hover:text-zinc-300 transition-colors"
-              >
-                <InstagramLogo size={20} weight="thin" />
-              </a>
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="text-zinc-600 hover:text-zinc-300 transition-colors"
-              >
-                <FacebookLogo size={20} weight="thin" />
-              </a>
+            {footer.social?.length > 0 && (
+              <div className="flex gap-3">
+                {footer.social.map((s) => {
+                  const Icon =
+                    SOCIAL_ICONS[s.platform.toLowerCase()] ?? LinkedinLogo;
+                  return (
+                    <a
+                      key={s.platform + s.href}
+                      href={s.href || "#"}
+                      aria-label={s.platform}
+                      className="text-zinc-600 hover:text-zinc-300 transition-colors"
+                    >
+                      <Icon size={20} weight="thin" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {footer.company_links?.length > 0 && (
+            <div>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest mb-5">
+                Компанія
+              </p>
+              <ul className="flex flex-col gap-3">
+                {footer.company_links.map((l) => (
+                  <li key={l.label + l.href}>
+                    <a
+                      href={l.href}
+                      className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
 
-          {/* Company */}
-          <div>
-            <p className="text-zinc-500 text-xs uppercase tracking-widest mb-5">
-              Компанія
-            </p>
-            <ul className="flex flex-col gap-3">
-              {companyLinks.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {footer.service_links?.length > 0 && (
+            <div>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest mb-5">
+                Послуги
+              </p>
+              <ul className="flex flex-col gap-3">
+                {footer.service_links.map((l) => (
+                  <li key={l.label + l.href}>
+                    <a
+                      href={l.href}
+                      className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          {/* Services */}
-          <div>
-            <p className="text-zinc-500 text-xs uppercase tracking-widest mb-5">
-              Послуги
-            </p>
-            <ul className="flex flex-col gap-3">
-              {serviceLinks.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contacts */}
           <div>
             <p className="text-zinc-500 text-xs uppercase tracking-widest mb-5">
               Контакти
             </p>
             <ul className="flex flex-col gap-3">
-              <li className="text-zinc-400 text-sm">м. Київ, вул. Хрещатик, 22</li>
-              <li>
-                <a
-                  href="tel:+380442471839"
-                  className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
-                >
-                  +380 44 247 18 39
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:info@metadim.ua"
-                  className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
-                >
-                  info@metadim.ua
-                </a>
-              </li>
+              {contact?.address && (
+                <li className="text-zinc-400 text-sm">{contact.address}</li>
+              )}
+              {contact?.phone && (
+                <li>
+                  <a
+                    href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+                    className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
+                  >
+                    {contact.phone}
+                  </a>
+                </li>
+              )}
+              {contact?.email && (
+                <li>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="text-zinc-400 text-sm hover:text-zinc-100 transition-colors"
+                  >
+                    {contact.email}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col sm:flex-row justify-between gap-4">
-          <p className="text-zinc-600 text-xs">
-            © 2024 MetaDim. Усі права захищені.
-          </p>
+          <p className="text-zinc-600 text-xs">{footer.copyright}</p>
           <div className="flex gap-6">
             <a href="#" className="text-zinc-600 text-xs hover:text-zinc-400 transition-colors">
               Політика конфіденційності

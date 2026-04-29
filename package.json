@@ -11,6 +11,9 @@
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.8",
     "@phosphor-icons/react": "^2.1.10",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.0",
+    "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.2",
     "next": "14.2.35",

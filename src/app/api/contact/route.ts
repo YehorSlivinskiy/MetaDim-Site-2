@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { saveContactRequest } from "@/lib/db";
 
 const TELEGRAM_TOKEN = "8763260524:AAEdSyDXLNb0BwB1dJSwgUFfHg-hOBmOcWs";
 const CHAT_ID = "-5219198991";
@@ -9,6 +10,8 @@ export async function POST(req: NextRequest) {
   if (!name || !phone) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
+
+  await saveContactRequest({ name, phone, message });
 
   const text =
     `📬 *Нова заявка з сайту MetaDim*\n\n` +
