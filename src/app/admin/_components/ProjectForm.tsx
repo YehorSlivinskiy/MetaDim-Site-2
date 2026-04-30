@@ -4,6 +4,7 @@ import { TextField, NumberField, TextareaField, ToggleField, SelectField } from 
 import { StringArrayField } from "./ArrayField";
 import ImagePicker from "./ImagePicker";
 import { FormShell, FormActions } from "./PageHeader";
+import DeleteButton from "./DeleteButton";
 import type { ProjectRow } from "@/lib/supabase";
 
 const CATEGORIES = [
@@ -28,6 +29,7 @@ export default function ProjectForm({
   destructiveAction?: () => void;
 }) {
   return (
+    <>
     <form action={action}>
       <FormShell>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
@@ -128,15 +130,27 @@ export default function ProjectForm({
         <input type="hidden" name="row_class" value={initial?.row_class ?? ""} />
         <input type="hidden" name="min_h" value={initial?.min_h ?? ""} />
 
-        <FormActions
-          cancelHref={cancelHref}
-          destructive={
-            destructiveAction
-              ? { action: destructiveAction, label: "Видалити проект" }
-              : undefined
-          }
-        />
+        <FormActions cancelHref={cancelHref} />
       </FormShell>
     </form>
+
+    {destructiveAction && (
+      <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-4xl">
+        <div className="border-t border-zinc-800 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm text-zinc-300">Небезпечна зона</p>
+            <p className="text-xs text-zinc-500 mt-1">
+              Видалення проекту незворотне і одразу вилучає його з сайту.
+            </p>
+          </div>
+          <DeleteButton
+            action={destructiveAction}
+            label="Видалити проект"
+            confirmMessage={`Видалити проект «${initial?.name ?? ""}»? Цю дію неможливо скасувати.`}
+          />
+        </div>
+      </div>
+    )}
+    </>
   );
 }

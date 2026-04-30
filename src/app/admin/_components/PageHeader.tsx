@@ -42,11 +42,9 @@ export function FormShell({ children }: { children: React.ReactNode }) {
 export function FormActions({
   cancelHref,
   submitLabel = "Зберегти",
-  destructive,
 }: {
   cancelHref: string;
   submitLabel?: string;
-  destructive?: { action: () => void; label: string };
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-4 border-t border-zinc-800">
@@ -62,16 +60,6 @@ export function FormActions({
       >
         Скасувати
       </Link>
-      {destructive && (
-        <form action={destructive.action} className="ml-auto">
-          <button
-            type="submit"
-            className="text-red-400 hover:text-red-300 text-sm px-3 sm:px-4 py-2.5 transition-colors"
-          >
-            {destructive.label}
-          </button>
-        </form>
-      )}
     </div>
   );
 }

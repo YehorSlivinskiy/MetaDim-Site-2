@@ -4,6 +4,7 @@ import { TextField, NumberField, TextareaField, ToggleField } from "./Fields";
 import { StringArrayField, ObjectArrayField } from "./ArrayField";
 import ImagePicker from "./ImagePicker";
 import { FormShell, FormActions } from "./PageHeader";
+import DeleteButton from "./DeleteButton";
 import type { ServiceRow } from "@/lib/supabase";
 
 export default function ServiceForm({
@@ -20,6 +21,7 @@ export default function ServiceForm({
   destructiveAction?: () => void;
 }) {
   return (
+    <>
     <form action={action}>
       <FormShell>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
@@ -102,15 +104,27 @@ export default function ServiceForm({
           />
         </div>
 
-        <FormActions
-          cancelHref={cancelHref}
-          destructive={
-            destructiveAction
-              ? { action: destructiveAction, label: "Видалити послугу" }
-              : undefined
-          }
-        />
+        <FormActions cancelHref={cancelHref} />
       </FormShell>
     </form>
+
+    {destructiveAction && (
+      <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-4xl">
+        <div className="border-t border-zinc-800 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm text-zinc-300">Небезпечна зона</p>
+            <p className="text-xs text-zinc-500 mt-1">
+              Видалення послуги незворотне і одразу вилучає її з сайту.
+            </p>
+          </div>
+          <DeleteButton
+            action={destructiveAction}
+            label="Видалити послугу"
+            confirmMessage={`Видалити послугу «${initial?.title ?? ""}»? Цю дію неможливо скасувати.`}
+          />
+        </div>
+      </div>
+    )}
+    </>
   );
 }
