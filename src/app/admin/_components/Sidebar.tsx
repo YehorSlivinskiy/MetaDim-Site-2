@@ -11,6 +11,7 @@ import {
   ChartBar,
   Gear,
   Envelope,
+  Scales,
   SignOut,
   List,
   X,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/testimonials", label: "Відгуки", Icon: Quotes },
   { href: "/admin/stats", label: "Статистика", Icon: ChartBar },
   { href: "/admin/site", label: "Контент сайту", Icon: Gear },
+  { href: "/admin/legal", label: "Юридичні", Icon: Scales },
   { href: "/admin/inbox", label: "Заявки", Icon: Envelope },
 ];
 

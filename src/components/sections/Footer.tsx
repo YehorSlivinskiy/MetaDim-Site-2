@@ -5,7 +5,8 @@ import {
   YoutubeLogo,
   XLogo,
 } from "@phosphor-icons/react/dist/ssr";
-import { getSiteSetting } from "@/lib/db";
+import Link from "next/link";
+import { getSiteSetting, getAllLegalPages } from "@/lib/db";
 import type { FooterSettings, ContactSettings } from "@/lib/supabase";
 
 type SocialIcon = typeof LinkedinLogo;
@@ -43,9 +44,10 @@ const SOCIAL_ICONS: Record<string, SocialIcon> = {
 };
 
 export default async function Footer() {
-  const [footerData, contactData] = await Promise.all([
+  const [footerData, contactData, legalPages] = await Promise.all([
     getSiteSetting("footer"),
     getSiteSetting("contact"),
+    getAllLegalPages().catch(() => []),
   ]);
   const footer = footerData ?? fallbackFooter;
   const contact: ContactSettings | null = contactData;
@@ -162,9 +164,24 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col sm:flex-row justify-between gap-4">
+        <div className="mt-16 pt-8 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <p className="text-zinc-600 text-xs">{footer.copyright}</p>
-          {/* Privacy / Terms hidden until real pages exist — placeholder links hurt SEO. */}
+          {legalPages.length > 0 && (
+            <nav aria-label="Юридична інформація">
+              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                {legalPages.map((p) => (
+                  <li key={p.slug}>
+                    <Link
+                      href={`/${p.slug}`}
+                      className="text-zinc-600 text-xs hover:text-zinc-300 transition-colors"
+                    >
+                      {p.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
-import { getProjects, getServices } from "@/lib/db";
+import { getProjects, getServices, getAllLegalPages } from "@/lib/db";
 
 export const revalidate = 3600; // 1h
 
@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let projectEntries: MetadataRoute.Sitemap = [];
   let serviceEntries: MetadataRoute.Sitemap = [];
+  let legalEntries: MetadataRoute.Sitemap = [];
 
   try {
     const projects = await getProjects();
@@ -49,5 +50,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // ignore
   }
 
-  return [...staticRoutes, ...projectEntries, ...serviceEntries];
+  try {
+    const legal = await getAllLegalPages();
+    legalEntries = legal.map((p) => ({
+      url: `${SITE_URL}/${p.slug}`,
+      lastModified: p.updated_at ? new Date(p.updated_at) : now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    }));
+  } catch {
+    // ignore
+  }
+
+  return [
+    ...staticRoutes,
+    ...projectEntries,
+    ...serviceEntries,
+    ...legalEntries,
+  ];
 }

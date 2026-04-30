@@ -65,6 +65,20 @@ export type StatRow = {
   is_published: boolean;
 };
 
+export type LegalSection = {
+  title?: string;
+  paragraphs: string[];
+};
+
+export type LegalPageRow = {
+  slug: string;
+  title: string;
+  description: string | null;
+  sections: LegalSection[];
+  sort_order: number;
+  updated_at: string;
+};
+
 export type ContactRequestRow = {
   id: number;
   name: string;

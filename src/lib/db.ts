@@ -6,6 +6,7 @@ import {
   type StatRow,
   type SiteSettingsMap,
   type SiteSettingsKey,
+  type LegalPageRow,
 } from "./supabase";
 
 export async function getProjects(): Promise<ProjectRow[]> {
@@ -134,6 +135,33 @@ export async function saveContactRequest(input: {
 }
 
 // Site settings ---------------------------------------------------------------
+
+// Legal pages ----------------------------------------------------------------
+
+export async function getLegalPage(slug: string): Promise<LegalPageRow | null> {
+  const { data, error } = await supabase
+    .from("legal_pages")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as LegalPageRow | null) ?? null;
+}
+
+export async function getAllLegalPages(): Promise<LegalPageRow[]> {
+  const { data, error } = await supabase
+    .from("legal_pages")
+    .select("*")
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data as LegalPageRow[]) ?? [];
+}
+
+export async function getLegalSlugs(): Promise<{ slug: string }[]> {
+  const { data, error } = await supabase.from("legal_pages").select("slug");
+  if (error) throw error;
+  return data ?? [];
+}
 
 export async function getSiteSetting<K extends SiteSettingsKey>(
   key: K,
