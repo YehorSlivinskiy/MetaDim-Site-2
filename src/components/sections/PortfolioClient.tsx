@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ProjectRow } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
@@ -62,12 +63,13 @@ export default function PortfolioClient({ projects }: { projects: ProjectRow[] }
               onClick={() => setActive({ project, number: i + 1 })}
               className={`col-span-12 ${layout} relative group overflow-hidden cursor-pointer`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={project.img}
                 alt={project.name}
-                loading={i === 0 ? "eager" : "lazy"}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-expo group-hover:scale-[1.04]"
+                fill
+                priority={i === 0}
+                sizes="(min-width: 1024px) 600px, 100vw"
+                className="object-cover transition-transform duration-700 ease-expo group-hover:scale-[1.04]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent transition-colors duration-500 group-hover:from-zinc-950/80" />
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gold origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-expo" />

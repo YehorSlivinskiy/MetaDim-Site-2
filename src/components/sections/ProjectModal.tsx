@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { X, ArrowRight, MapPin, Calendar, Ruler, Buildings } from "@phosphor-icons/react";
 import type { ProjectRow } from "@/lib/supabase";
@@ -43,7 +45,13 @@ export default function ProjectModal({
         className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-zinc-900 border border-zinc-800"
       >
         <div className="relative h-64 lg:h-80 overflow-hidden">
-          <img src={project.img} alt={project.name} className="w-full h-full object-cover" />
+          <Image
+            src={project.img}
+            alt={project.name}
+            fill
+            sizes="(min-width: 1024px) 896px, 100vw"
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/30 to-transparent" />
           <button
             onClick={onClose}
@@ -118,15 +126,22 @@ export default function ProjectModal({
           </div>
         </div>
 
-        <div className="px-8 lg:px-12 pb-8 lg:pb-10 flex items-center gap-4 border-t border-zinc-800 pt-6">
-          <a
-            href="/#contact"
+        <div className="px-8 lg:px-12 pb-8 lg:pb-10 flex flex-wrap items-center gap-3 border-t border-zinc-800 pt-6">
+          <Link
+            href={`/projects/${project.slug}`}
             onClick={onClose}
             className="inline-flex items-center gap-2 bg-gold text-zinc-950 font-display font-medium px-6 py-3 text-sm tracking-wide hover:bg-gold-dim transition-colors duration-200 active:scale-[0.98]"
           >
-            Схожий проект <ArrowRight size={14} weight="bold" />
+            Повна сторінка проекту <ArrowRight size={14} weight="bold" />
+          </Link>
+          <a
+            href="/#contact"
+            onClick={onClose}
+            className="inline-flex items-center gap-2 border border-zinc-700 text-zinc-300 font-display font-medium px-6 py-3 text-sm tracking-wide hover:border-zinc-500 hover:text-zinc-100 transition-colors"
+          >
+            Схожий проект
           </a>
-          <button onClick={onClose} className="text-zinc-500 text-sm hover:text-zinc-300 transition-colors">
+          <button onClick={onClose} className="ml-auto text-zinc-500 text-sm hover:text-zinc-300 transition-colors">
             Закрити
           </button>
         </div>

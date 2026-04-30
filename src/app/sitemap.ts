@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
-import { getProjects } from "@/lib/db";
+import { getProjects, getServices } from "@/lib/db";
 
 export const revalidate = 3600; // 1h
 
@@ -22,20 +22,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Reserve project permalinks for when /projects/[slug] routes ship.
-  // Until then we expose anchored fragments which Google still recognises.
   let projectEntries: MetadataRoute.Sitemap = [];
+  let serviceEntries: MetadataRoute.Sitemap = [];
+
   try {
     const projects = await getProjects();
     projectEntries = projects.map((p) => ({
-      url: `${SITE_URL}/works#${p.slug}`,
+      url: `${SITE_URL}/projects/${p.slug}`,
       lastModified: now,
       changeFrequency: "monthly",
-      priority: 0.6,
+      priority: 0.8,
     }));
   } catch {
     // DB unreachable at build time — skip dynamic entries
   }
 
-  return [...staticRoutes, ...projectEntries];
+  try {
+    const services = await getServices();
+    serviceEntries = services.map((s) => ({
+      url: `${SITE_URL}/services/${s.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }));
+  } catch {
+    // ignore
+  }
+
+  return [...staticRoutes, ...projectEntries, ...serviceEntries];
 }

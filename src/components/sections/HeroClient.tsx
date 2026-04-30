@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "@phosphor-icons/react";
 import SectionLabel from "@/components/ui/SectionLabel";
@@ -125,12 +126,16 @@ export default function HeroClient({ settings }: { settings: HeroSettings }) {
             variants={svgVariants}
             initial="hidden"
             animate="visible"
-            className="hidden lg:flex items-center justify-center lg:h-screen"
+            className="hidden lg:flex items-center justify-center lg:h-screen relative"
             aria-hidden="true"
           >
-            <img
+            <Image
               src="/images/image-17.webp"
-              alt="Архітектурне креслення"
+              alt=""
+              width={1200}
+              height={1600}
+              priority
+              sizes="45vw"
               className="h-full w-auto max-h-screen object-contain"
               style={{
                 mixBlendMode: "screen",

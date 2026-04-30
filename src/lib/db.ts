@@ -33,12 +33,69 @@ export async function getHomePortfolioProjects(limit = 6): Promise<ProjectRow[]>
   return data ?? [];
 }
 
+export async function getProjectBySlug(slug: string): Promise<ProjectRow | null> {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as ProjectRow | null) ?? null;
+}
+
+export async function getRelatedProjects(
+  excludeId: number,
+  category: string,
+  limit = 3,
+): Promise<ProjectRow[]> {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("is_published", true)
+    .eq("category", category)
+    .neq("id", excludeId)
+    .order("sort_order", { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getProjectSlugs(): Promise<{ slug: string }[]> {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("slug")
+    .eq("is_published", true);
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function getServices(): Promise<ServiceRow[]> {
   const { data, error } = await supabase
     .from("services")
     .select("*")
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getServiceBySlug(slug: string): Promise<ServiceRow | null> {
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as ServiceRow | null) ?? null;
+}
+
+export async function getServiceSlugs(): Promise<{ slug: string }[]> {
+  const { data, error } = await supabase
+    .from("services")
+    .select("slug")
+    .eq("is_published", true);
   if (error) throw error;
   return data ?? [];
 }

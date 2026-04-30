@@ -6,8 +6,9 @@ const fallback: NavigationSettings = {
   items: [
     { label: "Послуги", href: "#services" },
     { label: "Проекти", href: "#portfolio" },
-    { label: "Каталог робіт", href: "/works" },
+    { label: "Каталог", href: "/works" },
     { label: "Компанія", href: "#why" },
+    { label: "FAQ", href: "#faq" },
     { label: "Контакти", href: "#contact" },
   ],
   cta: { label: "Обговорити проект", href: "#contact" },

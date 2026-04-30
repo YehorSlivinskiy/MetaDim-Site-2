@@ -136,9 +136,12 @@ export function projectSchema(p: {
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
-    "@id": `${SITE_URL}/works#${p.slug}`,
+    "@id": `${SITE_URL}/projects/${p.slug}#project`,
+    url: `${SITE_URL}/projects/${p.slug}`,
     name: p.name,
-    description: p.description ?? `${p.category} проект ${p.year} року${p.location ? `, ${p.location}` : ""}.`,
+    description:
+      p.description ??
+      `${p.category} проект ${p.year} року${p.location ? `, ${p.location}` : ""}.`,
     image: p.img.startsWith("http") ? p.img : `${SITE_URL}${p.img}`,
     dateCreated: String(p.year),
     creator: { "@id": `${SITE_URL}/#organization` },
@@ -147,6 +150,104 @@ export function projectSchema(p: {
       : undefined,
     genre: p.category,
     ...(p.area ? { size: p.area } : {}),
+  };
+}
+
+export function fullProjectSchema(p: {
+  slug: string;
+  name: string;
+  year: number;
+  description: string | null;
+  img: string;
+  category: string;
+  location: string | null;
+  area: string | null;
+  duration: string | null;
+  facts: string[];
+  tags: string[];
+}): JsonLd {
+  const base = projectSchema(p) as Record<string, unknown>;
+  return {
+    ...base,
+    additionalProperty: [
+      ...(p.area
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: "Площа",
+              value: p.area,
+            },
+          ]
+        : []),
+      ...(p.duration
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: "Термін реалізації",
+              value: p.duration,
+            },
+          ]
+        : []),
+      ...(p.facts ?? []).map((fact) => ({
+        "@type": "PropertyValue",
+        name: "Особливість",
+        value: fact,
+      })),
+    ],
+    keywords: [...(p.tags ?? []), p.category, "MetaDim", "будівництво"].join(", "),
+    isPartOf: { "@id": `${SITE_URL}/works#catalog` },
+  };
+}
+
+export function serviceSchema(s: {
+  slug: string;
+  title: string;
+  description: string;
+  icon: string | null;
+  features: string[];
+  intro: string | null;
+}): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${SITE_URL}/services/${s.slug}#service`,
+    url: `${SITE_URL}/services/${s.slug}`,
+    name: s.title,
+    description: s.intro ?? s.description,
+    serviceType: s.title,
+    provider: { "@id": `${SITE_URL}/#organization` },
+    areaServed: BUSINESS.areaServed.map((name) => ({ "@type": "Place", name })),
+    ...(s.icon ? { image: s.icon.startsWith("http") ? s.icon : `${SITE_URL}${s.icon}` } : {}),
+    ...(s.features?.length
+      ? {
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: `Що входить у послугу «${s.title}»`,
+            itemListElement: s.features.map((f, i) => ({
+              "@type": "Offer",
+              position: i + 1,
+              itemOffered: { "@type": "Service", name: f },
+            })),
+          },
+        }
+      : {}),
+  };
+}
+
+export type FaqItem = { question: string; answer: string };
+
+export function faqSchema(items: FaqItem[]): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: it.answer,
+      },
+    })),
   };
 }
 

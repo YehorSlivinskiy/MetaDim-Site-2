@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, X, CheckCircle } from "@phosphor-icons/react";
 import type { ServiceRow } from "@/lib/supabase";
@@ -50,10 +52,12 @@ function ServiceModal({ service, index, onClose }: { service: ServiceRow; index:
       >
         <div className="relative h-56 lg:h-72 overflow-hidden">
           {service.icon && (
-            <img
+            <Image
               src={service.icon}
               alt={service.title}
-              className="w-full h-full object-cover"
+              fill
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="object-cover"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-transparent" />
@@ -120,17 +124,24 @@ function ServiceModal({ service, index, onClose }: { service: ServiceRow; index:
           </div>
         </div>
 
-        <div className="px-8 lg:px-12 pb-8 lg:pb-10 flex items-center gap-4 border-t border-zinc-800 pt-6">
-          <a
-            href="#contact"
+        <div className="px-8 lg:px-12 pb-8 lg:pb-10 flex flex-wrap items-center gap-3 border-t border-zinc-800 pt-6">
+          <Link
+            href={`/services/${service.slug}`}
             onClick={onClose}
             className="inline-flex items-center gap-2 bg-gold text-zinc-950 font-display font-medium px-6 py-3 text-sm tracking-wide hover:bg-gold-dim transition-colors duration-200 active:scale-[0.98]"
           >
-            Обговорити проект <ArrowRight size={14} weight="bold" />
+            Повна сторінка послуги <ArrowRight size={14} weight="bold" />
+          </Link>
+          <a
+            href="#contact"
+            onClick={onClose}
+            className="inline-flex items-center gap-2 border border-zinc-700 text-zinc-300 font-display font-medium px-6 py-3 text-sm tracking-wide hover:border-zinc-500 hover:text-zinc-100 transition-colors"
+          >
+            Обговорити
           </a>
           <button
             onClick={onClose}
-            className="text-zinc-500 text-sm hover:text-zinc-300 transition-colors"
+            className="ml-auto text-zinc-500 text-sm hover:text-zinc-300 transition-colors"
           >
             Закрити
           </button>
@@ -161,13 +172,14 @@ export default function ServicesClient({ services }: { services: ServiceRow[] })
               }`}
             >
               <div className={`relative overflow-hidden ${service.flip ? "lg:order-2" : ""}`}>
-                <div className="aspect-[4/3] lg:aspect-auto lg:h-full min-h-[280px] overflow-hidden group">
+                <div className="aspect-[4/3] lg:aspect-auto lg:h-full min-h-[280px] overflow-hidden group relative">
                   {service.icon && (
-                    <img
+                    <Image
                       src={service.icon}
                       alt={service.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 ease-expo group-hover:scale-[1.03]"
+                      fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 ease-expo group-hover:scale-[1.03]"
                     />
                   )}
                   <div className="absolute inset-0 bg-zinc-950/20 group-hover:bg-zinc-950/10 transition-colors duration-500" />
@@ -191,12 +203,20 @@ export default function ServicesClient({ services }: { services: ServiceRow[] })
                 <p className="text-zinc-400 leading-relaxed max-w-[40ch]">
                   {service.description}
                 </p>
-                <button
-                  onClick={() => setActive({ service, index: num })}
-                  className="inline-flex items-center gap-2 text-gold text-sm font-medium hover:gap-3 transition-all duration-200 w-fit"
-                >
-                  Детальніше <ArrowRight size={14} weight="bold" />
-                </button>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    onClick={() => setActive({ service, index: num })}
+                    className="inline-flex items-center gap-2 text-gold text-sm font-medium hover:gap-3 transition-all duration-200 w-fit"
+                  >
+                    Детальніше <ArrowRight size={14} weight="bold" />
+                  </button>
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="text-zinc-500 hover:text-zinc-200 text-sm transition-colors"
+                  >
+                    Сторінка послуги →
+                  </Link>
+                </div>
               </div>
             </motion.div>
           );
