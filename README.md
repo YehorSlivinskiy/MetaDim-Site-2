@@ -90,12 +90,15 @@ npm install
 
 ### 2. `.env.local`
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-TELEGRAM_BOT_TOKEN=<optional, for contact form notifications>
-TELEGRAM_CHAT_ID=<optional>
+Скопіюй `.env.example` → `.env.local` і заповни:
+
+```bash
+cp .env.example .env.local
 ```
+
+Мінімально необхідні: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
+
+Опційні (рекомендовані для production): `UPSTASH_REDIS_REST_URL/TOKEN` (rate limit), `RESEND_API_KEY` (email), `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (analytics).
 
 ### 3. Supabase
 
@@ -145,6 +148,29 @@ src/
 ```
 
 ---
+
+## Деплой на Vercel
+
+1. Push репозиторій на GitHub (вже зроблено).
+2. Зайти на [vercel.com](https://vercel.com) → **Add New Project** → імпортуй `MetaDim-Site-2`.
+3. Framework: Next.js (визначиться автоматично).
+4. **Environment Variables** — скопіюй всі ключі з `.env.local`. Особливо:
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+   - `NEXT_PUBLIC_SITE_URL` — `https://metadim.ua` після прив'язки домену
+   - `UPSTASH_REDIS_REST_URL/TOKEN` — створити безкоштовний DB на [upstash.com](https://upstash.com)
+   - `RESEND_API_KEY` — [resend.com](https://resend.com), free 100/day
+5. **Deploy** — отримуєш URL `<project>.vercel.app`.
+6. **Custom domain** (коли купиш `metadim.ua`):
+   - Project → Settings → Domains → додай `metadim.ua` і `www.metadim.ua`
+   - Vercel дасть DNS-записи (A `76.76.21.21`, CNAME `cname.vercel-dns.com`)
+   - Додай їх у DNS-провайдера домену
+   - Після пропагації (10 хв – 24 год) онови `NEXT_PUBLIC_SITE_URL`
+7. **Google Search Console**:
+   - https://search.google.com/search-console → Add property → DNS verification
+   - Submit sitemap: `https://metadim.ua/sitemap.xml`
+
+`vercel.json` уже містить безпекові заголовки (HSTS, X-Frame-Options, X-Robots-Tag для `/admin`).
 
 ## Розробка
 
